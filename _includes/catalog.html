@@ -1,0 +1,10 @@
+{% assign list=site.article|sort:'index' %}
+{% for note in list %}
+{% if note.tags contains include.tag %}
+{% unless note.tags contains '目录' %}
+- [{{ note.title }}]({{ note.url |relative_url}})
+{% endunless  %}
+
+{% endif %}
+
+{% endfor %}

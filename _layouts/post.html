@@ -10,8 +10,7 @@
         <div class="flex-1"></div>
       </nav>
       <header>
-        <h1>{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
-
+        <h1>{{ page.title }}</h1>
         <h2>{{ page.description |default:'' }}</h2>
         <h3>
           {% for tag in page.tags %}
