@@ -1,0 +1,46 @@
+---
+---
+
+<!DOCTYPE html>
+{% assign lang=site.lang | default: "en-US" %}
+<html lang="{{ lang }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}" />
+    <link rel="stylesheet" type="text/css" href="{{ '/assets/css/print.css' | relative_url }}" media="print" />
+
+    {% seo %} {% include head-custom.html %}
+  </head>
+  <body>
+    <div class="inner">
+      <nav class="flex">
+        <a href="{{site.baseurl}}/">首页</a>
+        <div class="flex-1"></div>
+      </nav>
+      <header>
+        <h1>标签</h1>
+
+        <h2>{{ page.description}}</h2>
+      </header>
+      <section class="main_content">
+        <h2>
+          {% assign tags = site.article | map: 'tags' | join: ',' | split: ',' | uniq %} {% for tag in tags %}
+          <h3 id="{{tag}}" style="background-color: slategrey;">{{ tag }}</h3>
+          <ul>
+            {% for note in site.article %} {% if note.tags contains tag %}
+            <li>
+              <p>
+                <a href="{{ site.baseurl }}{{ note.url }}">{{ note.title }}</a>
+              </p>
+            </li>
+            {% endif %} {% endfor %}
+          </ul>
+          {% endfor %}
+        </h2>
+      </section>
+      {% include footer.html %}
+    </div>
+  </body>
+</html>

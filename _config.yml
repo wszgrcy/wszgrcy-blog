@@ -1,0 +1,6 @@
+theme: jekyll-theme-tactile
+baseurl: /wszgrcy-blog
+encoding: utf-8
+collections:
+  article:
+    output: true

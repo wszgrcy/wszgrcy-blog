@@ -1,0 +1,38 @@
+---
+---
+
+//
+@import '{{ site.theme }}';
+
+.action-line {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
+}
+.flex {
+  display: flex;
+}
+.framework {
+  display: flex;
+  flex-direction: row;
+}
+.main_content {
+  flex: 1 1 0%;
+  width: 100%;
+}
+.sidebar {
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+}
+blockquote {
+  font-size: 1em;
+  padding-left: 0;
+}
+.inner{
+  width: 800px;
+}

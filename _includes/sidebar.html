@@ -1,0 +1,8 @@
+<section class="sidebar">
+  {% assign tags = site.article | map: 'tags' | join: ',' | split: ',' | uniq %} {% for tag in tags %}
+  <h3>
+    <a href="{{'tags'|relative_url}}#{{tag}}"> {{ tag }} </a>
+  </h3>
+
+  {% endfor %}
+</section>
