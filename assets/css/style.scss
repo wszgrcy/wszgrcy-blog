@@ -22,17 +22,19 @@
 }
 .main_content {
   flex: 1 1 0%;
-  width: 100%;
+  overflow: hidden;
 }
 .sidebar {
   position: sticky;
   top: 20px;
   align-self: flex-start;
+  flex: 0 0 auto;
+  margin-left: 16px;
 }
 blockquote {
   font-size: 1em;
   padding-left: 0;
 }
-.inner{
+.inner {
   width: 800px;
 }

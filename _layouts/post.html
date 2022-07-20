@@ -13,6 +13,13 @@
         <h1>{{ page.title | default: site.title | default: site.github.repository_name }}</h1>
 
         <h2>{{ page.description |default:'' }}</h2>
+        <h3>
+          {% for tag in page.tags %}
+          <label for="">
+            <a href="{{'tags'|relative_url}}#{{tag}}">{{tag}}</a>
+          </label>
+          {% endfor %}
+        </h3>
       </header>
       <div class="framework">
         <section class="main_content">{{ content }}</section>
