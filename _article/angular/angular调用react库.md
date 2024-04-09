@@ -1,5 +1,6 @@
 ---
 layout: post
+index: 301
 tags: Angular React
 title: 在 Angular 中调用 React 库
 ---
@@ -47,8 +48,192 @@ componentWrapper(xxxx, {}).reactElement
 
 <xxx [parent]="root"></xxx>
 ```
+## 举例
+- 以`react-flow`[官方例子](https://reactflow.dev/learn/layouting/layouting#d3-hierarchy)为例
+- react下
 
+```tsx
+import { stratify, tree } from 'd3-hierarchy';
+import React, { useCallback, useMemo } from 'react';
+import ReactFlow, {
+  ReactFlowProvider,
+  Panel,
+  useNodesState,
+  useEdgesState,
+  useReactFlow,
+} from 'reactflow';
+
+import { initialNodes, initialEdges } from './nodes-edges.js';
+import 'reactflow/dist/style.css';
+
+const g = tree();
+
+const getLayoutedElements = (nodes, edges, options) => {
+  if (nodes.length === 0) return { nodes, edges };
+
+  const { width, height } = document
+    .querySelector(`[data-id="${nodes[0].id}"]`)
+    .getBoundingClientRect();
+  const hierarchy = stratify()
+    .id((node) => node.id)
+    .parentId((node) => edges.find((edge) => edge.target === node.id)?.source);
+  const root = hierarchy(nodes);
+  const layout = g.nodeSize([width * 2, height * 2])(root);
+
+  return {
+    nodes: layout
+      .descendants()
+      .map((node) => ({ ...node.data, position: { x: node.x, y: node.y } })),
+    edges,
+  };
+};
+
+const LayoutFlow = () => {
+  const { fitView } = useReactFlow();
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const onLayout = useCallback(
+    (direction) => {
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, edges, {
+        direction,
+      });
+
+      setNodes([...layoutedNodes]);
+      setEdges([...layoutedEdges]);
+
+      window.requestAnimationFrame(() => {
+        fitView();
+      });
+    },
+    [nodes, edges]
+  );
+
+  return (
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      fitView
+    >
+      <Panel position="top-right">
+        <button onClick={onLayout}>layout</button>
+      </Panel>
+    </ReactFlow>
+  );
+};
+
+export default function () {
+  return (
+    <ReactFlowProvider>
+      <LayoutFlow />
+    </ReactFlowProvider>
+  );
+}
+```
+
+- ng下
+
+```html
+<react-outlet [component]="ReactFlowProvider" [root]="true">
+  <react-outlet [component]="ReactFlow" #child #root [runInReact]="context">
+    <react-outlet
+      [component]="Panel"
+      #child
+      [props]="$any({ position: 'top-right' })"
+    >
+      <button #child (click)="root.output()?.['onLayout']('TB')">
+        vertical layout
+      </button>
+      <button #child (click)="root.output()?.['onLayout']('LR')">
+        horizontal layout
+      </button>
+    </react-outlet>
+  </react-outlet>
+</react-outlet>
+
+```
+```ts
+import { Component } from '@angular/core';
+import { ReactOutlet } from '@cyia/ngx-bridge';
+import ReactFlow, {
+  ReactFlowProvider,
+  Panel,
+  useReactFlow,
+  useNodesState,
+  useEdgesState,
+} from 'reactflow';
+import Dagre from '@dagrejs/dagre';
+import { initialNodes, initialEdges } from './nodes-edges';
+import { useCallback } from 'react';
+
+const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+
+const getLayoutedElements = (nodes: any, edges: any, options: any) => {
+  g.setGraph({ rankdir: options.direction });
+
+  edges.forEach((edge: any) => g.setEdge(edge.source, edge.target));
+  nodes.forEach((node: any) => g.setNode(node.id, node));
+
+  Dagre.layout(g);
+
+  return {
+    nodes: nodes.map((node: any) => {
+      const { x, y } = g.node(node.id);
+
+      return { ...node, position: { x, y } };
+    }),
+    edges,
+  };
+};
+@Component({
+  selector: 'app-custom-layout',
+  standalone: true,
+  imports: [ReactOutlet],
+  templateUrl: './custom-layout.component.html',
+  styleUrl: './custom-layout.component.scss',
+  host: { style: 'display:block;height:400px' },
+})
+export class CustomLayoutComponent {
+  ReactFlowProvider = ReactFlowProvider;
+  ReactFlow = ReactFlow;
+  Panel = Panel;
+  context = (props: any, output: any) => {
+    const { fitView } = useReactFlow();
+    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const onLayout = useCallback(
+      (direction: any) => {
+        const layouted = getLayoutedElements(nodes, edges, { direction });
+        setNodes([...layouted.nodes]);
+        setEdges([...layouted.edges]);
+        window.requestAnimationFrame(() => {
+          fitView();
+        });
+      },
+      [nodes, edges]
+    );
+    return {
+      props: {
+        nodes,
+        edges,
+        onNodesChange,
+        onEdgesChange,
+        fitView: true,
+      },
+      output: {
+        onLayout,
+      },
+    };
+  };
+}
+
+```
+
+- 我们可以看到节点部分,完全分离到html模板中,并且结构完全与例子相同.而函数组件的逻辑部分,直接复制传入`runInReact`属性中就可以了,我们只需要在返回对象的`output`中写出导出相关方法,供给ng环境下调用
 ## 已测试库
+
 - `ngx-bridge` 在开发时还在以下库中进行了测试,均可正常执行
 > 理论上支持所有react库,但是无法一一测试,只是挑选了一些 star 比较高的库进行测试
 - reactflow
