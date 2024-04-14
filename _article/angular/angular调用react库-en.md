@@ -1,46 +1,45 @@
 ---
 layout: post
-index: 310
 tags: Angular React
 title: 在 Angular 中调用 React 库
 ---
-# 在 Angular 中调用 React 库
-- 在Angular中可以调用React库,但是,需要手动插入,所有写法全部是以React为主,Angular中只负责传入数据,这样写的很麻烦也很不优雅
-- 这样不妨使用 ngx-bridge, 实现与 react 一样的节点结构,在ng组件中使用react组件或在react组件中调用ng组件
+# Call React library in Angular
+- In Angular, the React library can be called, but manual insertion is required. All writing methods are mainly based on React, and Angular is only responsible for passing in data, which is very cumbersome and not elegant to write
+- In this way, we can use `ngx-bridge` to implement the same node structure as react, and use the react component in the ng component or call the ng component in the react component
 
-## ngx-bridge 简介
-- 在Angular开发中,为了方便开发者调用任意React库而设计
-- 为了使任意React库都可以像ng组件一样调用,减少开发心智
-- 在Angular开发中使开发使用库时多一种选择
+## ngx-bridge introduction
+- In Angular development, designed for the convenience of developers calling any React library
+- In order to make any React library callable like ng components and reduce development mindset
+- Provide an additional option for developers to use libraries in Angular development
 
-## 演示地址
+## demo
 - [https://wszgrcy.github.io/cyia-bridge/](https://wszgrcy.github.io/cyia-bridge/)
 
-## npm包
+## npm
 - [https://www.npmjs.com/package/@cyia/ngx-bridge](https://www.npmjs.com/package/@cyia/ngx-bridge)
 
-## 目前支持调用
-- ng组件中直接调用react组件
+## Currently supports calling
+- Directly calling the react component in the ng component
 
 
 ```html
 <react-outlet [component]="xxxx" [root]="true" #root></react-outlet>
 ```
 
-- react组件中直接调用ng组件
+- Directly calling the ng component in the react component
 
 ```tsx
 <NgOutletReact component={OutletRefTestComponent}></NgOutletReact>
 ```
 
-- react组件中的函数组件/节点可以使用ng组件
+- The function components/nodes in the react component can use the ng component
 
 ```ts
 wrapperToReact(xxxx, {}).reactFunctionComponent
 wrapperToReact(xxxx, {}).reactElement
 ```
 
-- ng调用react组件时,children可以为react组件,也可以是ng组件(投影)
+- When ng calls the react component, children can be either the react component or the ng component (projection)
 
 ```html
 <!-- 直接子组件,也就是react-outlet的子级 -->
@@ -51,9 +50,9 @@ wrapperToReact(xxxx, {}).reactElement
 <xxx [parent]="root"></xxx>
 ```
 
-## 举例
-- 以`react-flow`[官方例子](https://reactflow.dev/learn/layouting/layouting#d3-hierarchy)为例
-- react下
+## illustrate
+- `react-flow`[example](https://reactflow.dev/learn/layouting/layouting#d3-hierarchy)
+- react
 
 ```tsx
 import { stratify, tree } from 'd3-hierarchy';
@@ -136,7 +135,7 @@ export default function () {
 }
 ```
 
-- ng下
+- Angular
 
 ```html
 <react-outlet [component]="ReactFlowProvider" [root]="true">
@@ -234,12 +233,12 @@ export class CustomLayoutComponent {
 
 ```
 
-- 我们可以看到节点部分,完全分离到html模板中,并且结构完全与例子相同.而函数组件的逻辑部分,直接复制传入`runInReact`属性中就可以了,我们只需要在返回对象的`output`中写出导出相关方法,供给ng环境下调用
+- We can see that the node part is completely separated from the HTML template and has the same structure as the example. The logical part of the function component can be directly copied and passed into the `runInReact` attribute. We only need to write the export related methods in the `output` of the returned object, which can be called in the ng environment
 
-## 已测试库
+## Tested Library
 
-- `ngx-bridge` 在开发时还在以下库中进行了测试,均可正常执行
-> 理论上支持所有react库,但是无法一一测试,只是挑选了一些 star 比较高的库进行测试
+- `ngx-bridge` During development, testing was also conducted in the following libraries, and they can all be executed normally
+> In theory, it supports all React libraries, but cannot be tested one by one. We only selected some libraries with higher star values for testing
 - reactflow
 - slate
 - @tiptap
