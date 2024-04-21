@@ -50,7 +50,7 @@ wrapperToReact(xxxx, {}).reactElement
 <xxx [parent]="root"></xxx>
 ```
 
-## illustrate
+## example
 - `react-flow`[example](https://reactflow.dev/learn/layouting/layouting#d3-hierarchy)
 - react
 
